@@ -59,11 +59,12 @@ module SpreeSitemap::SpreeDefaults
   end
 
   def add_taxons(options = {})
-    Spree::Taxon.roots.each { |taxon| add_taxon(taxon, options) }
+    selected_taxons = Spree::Taxon.roots.where('taxonomy_id=1 or taxonomy_id=2 or taxonomy_id=5')
+    selected_taxons.each { |taxon| add_taxon(taxon, options) }
   end
 
   def add_taxon(taxon, options = {})
-    add(nested_taxons_path(taxon.permalink), options.merge(lastmod: taxon.products.last_updated)) if taxon.permalink.present?
+    add(seo_url(taxon.permalink), options.merge(lastmod: taxon.products.last_updated)) if taxon.permalink.present?
     taxon.children.each { |child| add_taxon(child, options) }
   end
 
